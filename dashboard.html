@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Suricata Live Dashboard</title>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #0d1117;
+            color: #fff;
+        }
+
+        .header {
+            padding: 15px;
+            background: #161b22;
+            font-size: 20px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .alert {
+            background: #1f2937;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 5px solid red;
+            border-radius: 5px;
+        }
+
+        .severity-1 { border-left-color: #00ff00; }
+        .severity-2 { border-left-color: #ffcc00; }
+        .severity-3 { border-left-color: #ff4444; }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    🔴 Live Suricata IDS Dashboard
+</div>
+
+<div class="container" id="alerts"></div>
+
+<script>
+const socket = io("http://localhost:5000");
+
+socket.on("alert", function(data) {
+    let div = document.createElement("div");
+
+    div.classList.add("alert");
+    div.classList.add("severity-" + data.severity);
+
+    div.innerHTML = `
+        <b>Time:</b> ${data.time} <br>
+        <b>Source:</b> ${data.src} → <b>Destination:</b> ${data.dest} <br>
+        <b>Alert:</b> ${data.msg}
+    `;
+
+    document.getElementById("alerts").prepend(div);
+});
+</script>
+
+</body>
+</html>
